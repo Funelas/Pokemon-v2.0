@@ -1,3 +1,9 @@
+import numpy as np
 class Pokemon:
     def __init__(self,name, health, power, potion, poisons):
-        self.number_of_pokemons = number_of_pokemon
+        self.name = name 
+        self.health = health 
+        self.power = power 
+        self.potion = potion 
+        self.poisons = poisons
+      

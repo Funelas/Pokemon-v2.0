@@ -1,6 +1,8 @@
+import numpy
 class Player:
     def __init__(self, name):
         self.name = name 
-    
-    def greet(self):
-        print(f'{self.name}: "Gusto mo ng mura? Tanginamo"')
+        self.pokemon_array = numpy.array([])
+    def choose_pokemon(self, pokemon):
+        self.pokemon_array = numpy.append(self.pokemon_array, pokemon)
+        
