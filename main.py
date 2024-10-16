@@ -1,4 +1,5 @@
 import player
+import pokemon
 import time 
 import random
 import numpy
@@ -12,6 +13,66 @@ def slow_type(passage, delay = 0, ending = False):
         print(end = "")
     else:
         print()
+pokemon_dtype = numpy.dtype([
+    ("name", "U20"),
+    ("element", "U20"),
+    ("health", "i4"),
+    ("power", "i4"),
+    ("potion", "i4"),
+    ("poison", "i4"),
+    ("strong_against", "U50"),
+    ("weak_against", "U50"),
+    ("cost", "i4")  # Added cost as a new field
+])
+
+# Create the Pokémon array with the updated structure
+pokemon_array = numpy.array([
+    ("Pikachu", "Electric", 35, 55, 3, 2, "Water", "Ground", 7),
+    ("Charmander", "Fire", 39, 52, 2, 3, "Grass", "Water, Rock", 7),
+    ("Bulbasaur", "Grass", 45, 49, 3, 2, "Water", "Fire, Flying", 1),
+    ("Squirtle", "Water", 44, 48, 3, 2, "Fire", "Grass, Electric", 1),
+    ("Jigglypuff", "Normal", 115, 45, 4, 1, "", "Fighting", 1),
+    ("Eevee", "Normal", 55, 55, 3, 2, "", "Fighting", 7),
+    ("Snorlax", "Normal", 160, 110, 2, 3, "", "Fighting", 11),
+    ("Gengar", "Ghost", 60, 65, 3, 4, "Psychic", "Ghost", 7),
+    ("Mewtwo", "Psychic", 106, 110, 2, 5, "Fighting", "Bug", 11),
+    ("Lapras", "Water", 130, 85, 3, 2, "Fire", "Electric", 7),
+    ("Togepi", "Fairy", 35, 40, 4, 1, "Dragon", "Poison", 1),
+    ("Psyduck", "Water", 50, 52, 3, 2, "Fire", "Grass", 7),
+    ("Onix", "Rock", 35, 45, 2, 2, "Fire", "Water, Fighting", 1),
+    ("Machop", "Fighting", 70, 80, 2, 3, "Normal", "Psychic", 7),
+    ("Magikarp", "Water", 20, 10, 5, 0, "Fire", "Electric", 1),
+    ("Dragonite", "Dragon", 91, 134, 2, 4, "Grass", "Ice", 11),
+    ("Lucario", "Fighting", 70, 110, 2, 3, "Normal", "Fighting", 11),
+    ("Caterpie", "Bug", 45, 30, 3, 0, "Grass", "Fire", 1),
+    ("Rattata", "Normal", 30, 56, 2, 2, "", "Fighting", 7),
+    ("Clefairy", "Fairy", 70, 45, 3, 2, "Dragon", "Steel", 1),
+    ("Pidgey", "Normal", 40, 45, 3, 1, "Grass", "Electric", 1),
+    ("Machoke", "Fighting", 80, 100, 2, 3, "Normal", "Psychic", 11),
+    ("Ponyta", "Fire", 50, 85, 2, 2, "Grass", "Water", 7),
+    ("Sandshrew", "Ground", 50, 75, 2, 2, "Electric", "Water", 7),
+    ("Nidoran", "Poison", 55, 40, 3, 2, "Fairy", "Psychic", 1),
+    ("Golbat", "Poison", 75, 80, 2, 2, "Grass", "Electric", 7),
+    ("Zubat", "Poison", 40, 45, 3, 2, "Grass", "Electric", 1),
+    ("Grimer", "Poison", 80, 80, 2, 2, "Fairy", "Psychic", 7),
+    ("Geodude", "Rock", 40, 80, 2, 1, "Fire", "Water", 7),
+    ("Hitmonlee", "Fighting", 50, 120, 2, 3, "Normal", "Psychic", 11),
+    ("Electrode", "Electric", 60, 50, 3, 3, "Water", "Ground", 7),
+    ("Alakazam", "Psychic", 55, 120, 2, 5, "Fighting", "Bug", 11),
+], dtype=pokemon_dtype)
+
+# Display the updated array
+
+high_powered_pokemons = pokemon_array[pokemon_array["power"] >= 100]
+mid_powered_pokemons = pokemon_array[(pokemon_array["power"] > 50) & (pokemon_array["power"] < 100)]
+low_powered_pokemons = pokemon_array[pokemon_array["power"] < 50]
+high_powered_pokemons_names = numpy.array([pokemon["name"] for pokemon in high_powered_pokemons])
+mid_powered_pokemons_names = numpy.array([pokemon["name"] for pokemon in mid_powered_pokemons])
+low_powered_pokemons_names = numpy.array([pokemon["name"] for pokemon in low_powered_pokemons])
+
+headers = ["High-Powered Pokemons\nCost = 11", "Mid-Powered Pokemons\nCost = 7", "Low-Powered Pokemons\nCost = 1"]
+data = zip(high_powered_pokemons_names, mid_powered_pokemons_names, low_powered_pokemons_names)
+table = tabulate.tabulate(data, headers, tablefmt = "pretty")
 slow_type("Welcome to Pokémon Battle Royale: Power, Strategy, and Fatigue!", 0.1)
 slow_type("Please Enter your Name",0.1)
 player_1 = player.Player(str(input("Player 1: ")))
@@ -113,76 +174,22 @@ while True:
     if chooser_coin == coin_flip_result[0].lower():
         slow_type(f"{chooser.name} won. Therefore they will have the privilege to choose first in the roster of pokemons, followed by {other_player.name}.", 0.5)
         slow_type(f"We will now proceed to pokemon pickings! We will have {chooser.name} then followed by {other_player.name}.")
+        print(table)
+        for _ in range(3):
+            while True:
+                chooser_pokemon_choice = str(input(f"{chooser.name}")).title()
+                if (chooser_pokemon_choice not in chooser.pokemon_name_array or chooser_pokemon_choice not in other_player.pokemon_name_array) and (chooser.points - pokemon_array[pokemon_array["name" == chooser_pokemon_choice]]["cost"] >= 0):
+                    pass
+            chooser.choose_pokemon()
+            other_player.choose_pokemon()
+ ### CONTINUE HERE ###           
     else:
         slow_type(f"{chooser.name} lost. Therefore they will have the choose after {other_player.name} have chosen.", 0.5)
         slow_type(f"We will now proceed to pokemon pickings! We will have {other_player.name} then followed by {chooser.name}.")
-    pokemon_dtype = numpy.dtype([
-                ('name', 'U20'),              # Name of the Pokémon (up to 20 characters)
-                ('element', 'U10'),           # Element of the Pokémon (up to 10 characters)
-                ('health', 'i4'),             # Health (integer)
-                ('power', 'i4'),              # Power (integer)
-                ('healing_potions', 'i4'),    # Healing potions (integer)
-                ('poisons', 'i4'),            # Poisons (integer)
-                ('strong_against', 'U50'),    # Strong against type (up to 50 characters)
-                ('weak_against', 'U50'),      # Weak against type (up to 50 characters)
-            ])
-    pokemon_array = numpy.array([
-                ("Pikachu", "Electric", 35, 55, 3, 2, "Water", "Ground"),
-                ("Charmander", "Fire", 39, 52, 2, 3, "Grass", "Water, Rock"),
-                ("Bulbasaur", "Grass", 45, 49, 3, 2, "Water", "Fire, Flying"),
-                ("Squirtle", "Water", 44, 48, 3, 2, "Fire", "Grass, Electric"),
-                ("Jigglypuff", "Normal", 115, 45, 4, 1, "", "Fighting"),
-                ("Eevee", "Normal", 55, 55, 3, 2, "", "Fighting"),
-                ("Snorlax", "Normal", 160, 110, 2, 3, "", "Fighting"),
-                ("Gengar", "Ghost", 60, 65, 3, 4, "Psychic", "Ghost"),
-                ("Mewtwo", "Psychic", 106, 110, 2, 5, "Fighting", "Bug"),
-                ("Lapras", "Water", 130, 85, 3, 2, "Fire", "Electric"),
-                ("Togepi", "Fairy", 35, 40, 4, 1, "Dragon", "Poison"),
-                ("Psyduck", "Water", 50, 52, 3, 2, "Fire", "Grass"),
-                ("Onix", "Rock", 35, 45, 2, 2, "Fire", "Water, Fighting"),
-                ("Machop", "Fighting", 70, 80, 2, 3, "Normal", "Psychic"),
-                ("Magikarp", "Water", 20, 10, 5, 0, "Fire", "Electric"),
-                ("Dragonite", "Dragon", 91, 134, 2, 4, "Grass", "Ice"),
-                ("Lucario", "Fighting", 70, 110, 2, 3, "Normal", "Fighting"),
-                ("Caterpie", "Bug", 45, 30, 3, 0, "Grass", "Fire"),
-                ("Rattata", "Normal", 30, 56, 2, 2, "", "Fighting"),
-                ("Clefairy", "Fairy", 70, 45, 3, 2, "Dragon", "Steel"),
-                ("Pidgey", "Normal", 40, 45, 3, 1, "Grass", "Electric"),
-                ("Machoke", "Fighting", 80, 100, 2, 3, "Normal", "Psychic"),
-                ("Ponyta", "Fire", 50, 85, 2, 2, "Grass", "Water"),
-                ("Sandshrew", "Ground", 50, 75, 2, 2, "Electric", "Water"),
-                ("Nidoran♀", "Poison", 55, 40, 3, 2, "Fairy", "Psychic"),
-                ("Nidoran♂", "Poison", 46, 57, 2, 2, "Fairy", "Psychic"),
-                ("Golbat", "Poison", 75, 80, 2, 2, "Grass", "Electric"),
-                ("Zubat", "Poison", 40, 45, 3, 2, "Grass", "Electric"),
-                ("Grimer", "Poison", 80, 80, 2, 2, "Fairy", "Psychic"),
-                ("Geodude", "Rock", 40, 80, 2, 1, "Fire", "Water"),
-                ("Hitmonlee", "Fighting", 50, 120, 2, 3, "Normal", "Psychic"),
-                ("Electrode", "Electric", 60, 50, 3, 3, "Water", "Ground"),
-                ("Alakazam", "Psychic", 55, 120, 2, 5, "Fighting", "Bug"),
-            ], dtype=pokemon_dtype)
-    overpowered_pokemon = pokemon_array[(pokemon_array['power'] >= 100)]
-    mid_tier_pokemon = pokemon_array[(pokemon_array['power'] >= 50) & (pokemon_array['power'] < 100)]
-    weakest_pokemon = pokemon_array[(pokemon_array['power'] < 50)]
-
-    # For the names of pokemons in display
-    overpowered_pokemon_names = numpy.array([pokemon["name"] for pokemon in overpowered_pokemon], object).astype(str).tolist()
-    mid_tier_pokemon_names = numpy.array([pokemon["name"] for pokemon in mid_tier_pokemon], object)
-    weakest_pokemon_names = numpy.array([pokemon["name"] for pokemon in weakest_pokemon], object)
-        # Creating separate arrays for each group
-    overpowered_array = numpy.array(overpowered_pokemon)
-    mid_tier_array = numpy.array(mid_tier_pokemon)
-    weakest_array = numpy.array(weakest_pokemon)
-    headers = numpy.array(["Cost = 11", "Cost = 7", "Cost = 1"], "U10")
-    # Creating headers for the table
-    headers = ["Overpowered", "Mid Tier", "Weakest"]
-
-    # Preparing the data for tabulate
-    data = [overpowered_pokemon_names, mid_tier_pokemon_names, weakest_pokemon_names]
-
-    # Using tabulate to display the data
-    pokemon_display = tabulate.tabulate(data, headers, tablefmt="pretty")
-    print(pokemon_display)
+        for _ in range(3):
+            other_player.choose_pokemon(pokemon.Pokemon())
+            chooser.choose_pokemon()
     
-
-
+    
+    print(table)
+    
